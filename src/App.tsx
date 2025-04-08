@@ -12,7 +12,6 @@ import {
   BibleResponse,
   VersesForChapterResponse,
   BookResponse,
-  SearchResponse,
   PassageResponse,
   SearchResult
 } from './types/bible';
@@ -51,7 +50,7 @@ const App = () => {
     'Kings': '1KI', 'Chronicles': '1CH', 'Ezra': 'EZR',
     'Nehemiah': 'NEH', 'Esther': 'EST', 'Job': 'JOB',
     'Matthew': 'MAT', 'Mark': 'MRK', 'Luke': 'LUK',
-    'John (Gospel)': 'JHN', 'Acts': 'ACT', 'Romans': 'ROM',
+    'John (Gospel)': 'JHN', 'John': 'JHN', 'Acts': 'ACT', 'Romans': 'ROM',
     'Corinthians': '1CO', 'Galatians': 'GAL', 'Ephesians': 'EPH',
     'Philippians': 'PHP', 'Colossians': 'COL', 'Thessalonians': '1TH',
     'Timothy': '1TI', 'Titus': 'TIT', 'Philemon': 'PHM',
@@ -300,17 +299,6 @@ const App = () => {
     }
   };
 
-  // Bible books list
-  const bibleBooks = [
-    'Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy',
-    'Joshua', 'Judges', 'Ruth', 'Samuel', 'Kings',
-    'Chronicles', 'Ezra', 'Nehemiah', 'Esther', 'Job',
-    'Matthew', 'Mark', 'Luke', 'John (Gospel)', 'Acts',
-    'Romans', 'Corinthians', 'Galatians', 'Ephesians', 'Philippians',
-    'Colossians', 'Thessalonians', 'Timothy', 'Titus', 'Philemon',
-    'Hebrews', 'James', 'Peter', 'John (Epistle)', 'Jude', 'Revelation'
-  ];
-
   return (
     <div className={`min-h-screen ${darkMode ? 'dark bg-sky-950' : 'bg-sky-50'}`}>
       {/* Navigation Bar */}
@@ -409,18 +397,18 @@ const App = () => {
                   }}
                   placeholder="Search for verses..."
                   className={`w-full border ${darkMode
-                      ? 'border-sky-700 bg-sky-900 text-white placeholder-sky-400'
-                      : 'border-sky-200 bg-white text-sky-900 placeholder-sky-400'
+                    ? 'border-sky-700 bg-sky-900 text-white placeholder-sky-400'
+                    : 'border-sky-200 bg-white text-sky-900 placeholder-sky-400'
                     } p-4 pl-12 pr-24 rounded-lg`}
                 />
                 <button
                   onClick={() => handleSearch(searchQuery)}
                   disabled={isLoading || !searchQuery.trim()}
                   className={`absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded ${isLoading || !searchQuery.trim()
-                      ? 'opacity-50 cursor-not-allowed'
-                      : darkMode
-                        ? 'bg-sky-600 hover:bg-sky-500 text-white'
-                        : 'bg-sky-500 hover:bg-sky-400 text-white'
+                    ? 'opacity-50 cursor-not-allowed'
+                    : darkMode
+                      ? 'bg-sky-600 hover:bg-sky-500 text-white'
+                      : 'bg-sky-500 hover:bg-sky-400 text-white'
                     }`}
                 >
                   {isLoading ? (
@@ -444,8 +432,8 @@ const App = () => {
                     <div
                       key={index}
                       className={`p-4 ${darkMode
-                          ? 'bg-sky-800 hover:bg-sky-700'
-                          : 'bg-sky-50 hover:bg-sky-100'
+                        ? 'bg-sky-800 hover:bg-sky-700'
+                        : 'bg-sky-50 hover:bg-sky-100'
                         } rounded-lg transition-colors`}
                     >
                       <div className={`flex justify-between items-start mb-2`}>
@@ -476,8 +464,8 @@ const App = () => {
                   </label>
                   <select
                     className={`w-full border ${darkMode
-                        ? 'border-sky-700 bg-sky-900 text-white'
-                        : 'border-sky-200 bg-white text-sky-900'
+                      ? 'border-sky-700 bg-sky-900 text-white'
+                      : 'border-sky-200 bg-white text-sky-900'
                       } p-2`}
                     onChange={(e) => {
                       const testament = e.target.value as 'OLD' | 'NEW';
@@ -510,25 +498,24 @@ const App = () => {
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-                      {bibleBooks
+                      {books
                         .filter(book => {
-                          const bookId = bibleBookIds[book];
-                          return TESTAMENT_GROUPS[`${selectedTestament}_TESTAMENT`].books.includes(bookId);
+                          return TESTAMENT_GROUPS[`${selectedTestament}_TESTAMENT`].books.includes(book.id);
                         })
                         .map((book) => (
                           <button
-                            key={book}
-                            className={`${selectedBook === bibleBookIds[book]
-                                ? darkMode
-                                  ? 'bg-sky-600 text-white'
-                                  : 'bg-sky-300 text-sky-900'
-                                : darkMode
-                                  ? 'bg-sky-800 text-white hover:bg-sky-700'
-                                  : 'bg-sky-100 text-sky-800 hover:bg-sky-200'
+                            key={book.id}
+                            className={`${selectedBook === book.id
+                              ? darkMode
+                                ? 'bg-sky-600 text-white'
+                                : 'bg-sky-300 text-sky-900'
+                              : darkMode
+                                ? 'bg-sky-800 text-white hover:bg-sky-700'
+                                : 'bg-sky-100 text-sky-800 hover:bg-sky-200'
                               } p-3 text-center transition-colors duration-200`}
-                            onClick={() => handleBookSelect(book)}
+                            onClick={() => handleBookSelect(book.name)}
                           >
-                            {book}
+                            {book.name}
                           </button>
                         ))}
                     </div>
@@ -554,8 +541,8 @@ const App = () => {
                     onChange={handleChapterSelect}
                     disabled={!selectedBook}
                     className={`w-full border ${darkMode
-                        ? 'border-sky-700 bg-sky-900 text-white'
-                        : 'border-sky-200 bg-white text-sky-900'
+                      ? 'border-sky-700 bg-sky-900 text-white'
+                      : 'border-sky-200 bg-white text-sky-900'
                       } p-2 ${!selectedBook ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <option value="">-- Select Chapter --</option>
@@ -583,8 +570,8 @@ const App = () => {
                     onChange={handleVerseSelect}
                     disabled={!selectedChapter}
                     className={`w-full border ${darkMode
-                        ? 'border-sky-700 bg-sky-900 text-white'
-                        : 'border-sky-200 bg-white text-sky-900'
+                      ? 'border-sky-700 bg-sky-900 text-white'
+                      : 'border-sky-200 bg-white text-sky-900'
                       } p-2 ${!selectedChapter ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <option value="">-- Select Verse --</option>
